@@ -1,0 +1,29 @@
+ONE-SHOT IDEMPOTENT HEREDOC BUILD METHOD
+Adapted for Dual-Wi-Fi & SQLite Contention Forensic Explainer (No Pulumi)
+
+1. SINGLE-SCRIPT HEREDOC MATERIALIZATION
+   Every file in the repository is written in one pass using quoted heredocs
+   (cat <<'EOF' > "$TARGET_DIR/..."). Single-quoting the delimiter ('EOF')
+   prevents shell variable or backtick expansion inside code, SQL, Caddyfile,
+   or JSON payloads.
+
+2. IDEMPOTENCY ON RE-RUN
+   - Directory creation uses `mkdir -p`, which succeeds whether folders already
+     exist or not.
+   - File writes overwrite target paths deterministically from a single source
+     of truth in the build script, avoiding drift from manual edits or stream
+     rewrites.
+   - Git initialization checks for `.git`, stages all changes, and only commits
+     when `git diff --cached --quiet` reports staged changes.
+   - GitHub repository creation checks `gh repo view` first and creates the repo
+     only if absent.
+   - GitHub Pages configuration attempts POST to create Pages and falls back to
+     PUT if Pages is already enabled.
+
+3. DUAL-PLANE DELIVERY
+   - Plane 1 (Static GitHub Pages): Builds Vite + React + Tailwind + Three.js
+     into dist/, copies dist/ into a temporary git worktree on the Pages branch,
+     pushes it, and polls until HTTP 200 before calling xdg-open.
+   - Plane 2 (Optional Local Docker Stack): Provides docker-compose.yml,
+     Caddyfile, FastAPI, and SQLite (WAL + FTS5) for local persistence and
+     full-text search when running locally.
