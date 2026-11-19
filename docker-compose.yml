@@ -1,0 +1,37 @@
+services:
+  api:
+    build:
+      context: ./backend
+    container_name: forensics-sqlite-api
+    restart: unless-stopped
+    environment:
+      FORENSICS_DB_PATH: /var/lib/forensics-explainer/forensics.db
+      HOST_SSH_HOST: ${HOST_SSH_HOST:-host.docker.internal}
+      HOST_SSH_PORT: ${HOST_SSH_PORT:-22}
+      HOST_SSH_USER: ${HOST_SSH_USER:-}
+      HOST_SSH_KEY_DIR: /run/host-ssh
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - forensics_sqlite_data:/var/lib/forensics-explainer
+      - ${HOST_SSH_MOUNT_DIR:-/tmp}:/run/host-ssh:ro
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+
+  caddy:
+    image: caddy:2.8-alpine
+    container_name: forensics-caddy-proxy
+    restart: unless-stopped
+    ports:
+      - "8088:80"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  forensics_sqlite_data:

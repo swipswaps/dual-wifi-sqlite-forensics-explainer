@@ -1,0 +1,16 @@
+:80 {
+	header {
+		Access-Control-Allow-Origin *
+		Access-Control-Allow-Methods "GET, POST, OPTIONS"
+		Access-Control-Allow-Headers "Content-Type"
+	}
+
+	@options method OPTIONS
+	respond @options 204
+
+	handle /api/* {
+		reverse_proxy api:8000
+	}
+
+	respond "Forensics SQLite & SSH Backend Proxy Active" 200
+}

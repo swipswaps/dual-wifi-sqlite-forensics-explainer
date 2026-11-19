@@ -1,0 +1,20 @@
+ONE-SHOT IDEMPOTENT HEREDOC BUILD METHOD
+Dual-Wi-Fi & SQLite Contention Forensic Explainer
+
+1. SINGLE-SCRIPT HEREDOC MATERIALIZATION
+   Every file is written deterministically via single-quoted heredocs
+   (cat <<'EOF' > "$TARGET_DIR/..."), preventing unintended shell expansion.
+
+2. IDEMPOTENT RE-RUN BEHAVIOR
+   - mkdir -p creates directories safely whether or not they exist.
+   - Full file overwrites keep every file aligned with the single script.
+   - Git stages changes and commits only when staged diffs are non-empty.
+   - GitHub repo checks `gh repo view`; GitHub Pages uses POST with PUT fallback.
+   - Playwright results are parsed recursively into README.txt without duplicate sections.
+
+3. DUAL-PLANE + HOST SSH ARCHITECTURE
+   - Static GitHub Pages Plane: Vite + React + Tailwind CSS + Three.js,
+     top-of-page backend quick-start, collapsible (+ / -) Copy/Download code
+     blocks, and automatic local backend probing.
+   - Local Docker Plane: Caddy + FastAPI + SQLite (WAL + FTS5) + SSH client
+     (`POST /api/host/exec`) to inspect/manage the host workstation over SSH.
