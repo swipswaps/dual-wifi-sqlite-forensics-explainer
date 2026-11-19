@@ -1,8 +1,8 @@
--- Write-Ahead Logging allows readers to proceed without blocking writers and
--- coordinates concurrent access through WAL shared memory.
+-- Write-Ahead Logging allows readers without blocking writers and coordinates
+-- concurrent access through WAL shared memory.
 PRAGMA journal_mode = WAL;
 PRAGMA synchronous = NORMAL;
--- busy_timeout applies per database connection in milliseconds.
+-- busy_timeout applies per connection in milliseconds.
 PRAGMA busy_timeout = 5000;
 PRAGMA foreign_keys = ON;
 

@@ -6,7 +6,7 @@ const CANDIDATE_URLS = [
   "http://localhost:8088",
 ].filter(Boolean);
 
-// Probes optional local Docker Compose backend; falls back cleanly to static mode.
+// Probes optional local Docker backend; falls back cleanly to static explainer mode.
 export function useBackendDetection() {
   const [backendUrl, setBackendUrl] = useState(null);
   const [health, setHealth] = useState(null);
@@ -36,7 +36,7 @@ export function useBackendDetection() {
             return;
           }
         } catch {
-          // Probe next candidate URL.
+          // Optional backend unavailable on this candidate URL.
         }
       }
       if (active) {

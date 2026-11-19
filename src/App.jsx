@@ -97,7 +97,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
+    <div id="top" className="min-h-screen bg-slate-950 text-slate-100">
       <header className="border-b border-slate-800 bg-slate-900/90">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-4">
           <div>
@@ -128,10 +128,35 @@ export default function App() {
             </span>
           </div>
         </div>
+
+        <nav
+          aria-label="Section jump links"
+          className="border-t border-slate-800/80 bg-slate-950/60"
+        >
+          <div className="mx-auto flex max-w-6xl flex-wrap gap-2 px-4 py-2 text-xs">
+            <a href="#topology-3d" className="rounded bg-slate-900 px-2.5 py-1 text-sky-300 hover:bg-slate-800">
+              1. 3D Topology
+            </a>
+            <a href="#adapter-table" className="rounded bg-slate-900 px-2.5 py-1 text-sky-300 hover:bg-slate-800">
+              2. Wi-Fi Telemetry
+            </a>
+            <a href="#findings-list" className="rounded bg-slate-900 px-2.5 py-1 text-sky-300 hover:bg-slate-800">
+              3. Findings
+            </a>
+            <a href="#user-code" className="rounded bg-slate-900 px-2.5 py-1 text-sky-300 hover:bg-slate-800">
+              4. User Code
+            </a>
+            <a href="#citations" className="rounded bg-slate-900 px-2.5 py-1 text-sky-300 hover:bg-slate-800">
+              5. Citations
+            </a>
+          </div>
+        </nav>
       </header>
 
       <main className="mx-auto max-w-6xl space-y-6 px-4 py-6">
-        <TopologyScene3D activeFocus={domainFilter} contentionRate={contentionRate} />
+        <section id="topology-3d">
+          <TopologyScene3D activeFocus={domainFilter} contentionRate={contentionRate} />
+        </section>
 
         <section className="grid gap-4 rounded-xl border border-slate-800 bg-slate-900/60 p-4 md:grid-cols-3">
           <div>
@@ -182,17 +207,22 @@ export default function App() {
               onChange={(e) => setContentionRate(parseFloat(e.target.value))}
               className="mt-3 w-full accent-sky-500"
             />
+            <div className="mt-1 flex justify-between font-mono text-[10px] text-slate-400">
+              <span>10%</span>
+              <span>55%</span>
+              <span>100%</span>
+            </div>
           </div>
         </section>
 
-        <section className="space-y-2">
+        <section id="adapter-table" className="space-y-2">
           <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-300">
             Empirical Wireless Adapter Comparison (100-Packet Sample)
           </h2>
           <AdapterComparisonTable />
         </section>
 
-        <section className="space-y-3">
+        <section id="findings-list" className="space-y-3">
           <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-300">
             Audited Findings & Root-Cause Mechanisms
           </h2>
@@ -208,14 +238,17 @@ export default function App() {
           />
         </section>
 
-        <section className="space-y-3">
+        <section id="user-code" className="space-y-3">
           <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-300">
             Example User Code (Copy & Download)
           </h2>
           <ExampleCodeBlocks />
         </section>
 
-        <footer className="rounded-xl border border-slate-800 bg-slate-900/50 p-4 text-xs text-slate-400">
+        <footer
+          id="citations"
+          className="rounded-xl border border-slate-800 bg-slate-900/50 p-4 text-xs text-slate-400"
+        >
           <div className="font-semibold text-slate-200">Verified References & Citations</div>
           <ul className="mt-2 grid gap-1.5 sm:grid-cols-2">
             {CITATIONS.map((c) => (

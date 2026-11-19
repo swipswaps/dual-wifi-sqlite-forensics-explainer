@@ -1,4 +1,4 @@
-"""FastAPI backend providing SQLite WAL + FTS5 search and operator note persistence."""
+"""FastAPI backend exposing SQLite WAL + FTS5 search and operator notes."""
 
 from contextlib import asynccontextmanager
 import os
@@ -43,7 +43,7 @@ SEED_FINDINGS = [
         "sqlite",
         "1,500 'database is locked (5)' Errors from Per-Row Writers & Masked Failures",
         "defect",
-        "collect-network.sh spawns separate sqlite3 processes per row without busy_timeout; 1,500 lock errors occurred in 13 of 17 minutes while exiting 0.",
+        "collect-network.sh spawns separate sqlite3 processes per row without busy_timeout; 1,500 lock errors occurred in 13 of 17 minutes while still echoing completion and exiting 0.",
         "SQLite busy_timeout is per-connection; uncoordinated multi-process writes collide under SQLITE_BUSY while trailing echo masks failed statements.",
     ),
     (
@@ -74,7 +74,7 @@ SEED_FINDINGS = [
 
 
 def open_db() -> sqlite3.Connection:
-    """Create a connection with explicit WAL mode and busy_timeout."""
+    """Open a SQLite connection configured for WAL mode and explicit busy_timeout."""
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(str(DB_PATH), timeout=5.0)
     conn.row_factory = sqlite3.Row
@@ -86,7 +86,7 @@ def open_db() -> sqlite3.Connection:
 
 
 def init_db() -> None:
-    """Apply DDL schema and seed initial findings idempotently."""
+    """Initialize schema and seed initial findings idempotently."""
     schema_sql = SCHEMA_PATH.read_text(encoding="utf-8")
     conn = open_db()
     try:
@@ -119,7 +119,7 @@ async def lifespan(_app: FastAPI):
 
 app = FastAPI(
     title="Dual-Wi-Fi & SQLite Forensics API",
-    version="1.2.0",
+    version="1.5.0",
     lifespan=lifespan,
 )
 

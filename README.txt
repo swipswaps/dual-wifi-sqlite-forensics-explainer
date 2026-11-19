@@ -7,20 +7,18 @@ BCM4331 on b43 vs. Realtek RTL8188ETV on rtl8xxxu) and multi-process SQLite
 lock contention (SQLITE_BUSY / error code 5) observed on a Fedora 43 host.
 
 FEATURES
+- Quick section navigation bar for fast orientation across 3D topology,
+  adapter telemetry, findings, copy/downloadable code, and citations.
 - Interactive Three.js 3D topology view of wireless interfaces, 60-second
-  systemd timers, and SQLite write contention.
-- Subsystem filtering (all, wireless, sqlite, systemd) and keyword/FTS5 search.
+  systemd timers, and SQLite WAL write contention.
+- Subsystem filtering (all, wireless, sqlite, systemd), search input, and
+  continuous write-contention rate slider.
 - Empirical 100-packet adapter comparison table.
 - Example user remediation code blocks (batched_sqlite_writer.py and
   per-iface-wifi-probe.sh) with Copy and Download buttons and verbose comments.
 - Automatic detection of an optional local Docker Compose backend (Caddy +
   FastAPI + SQLite WAL/FTS5), with seamless static fallback on GitHub Pages.
 - Verified HTTPS and ISBN citation references.
-
-BUILD, PUBLISH & OPEN
-Run ./build-and-deploy.sh to generate files, build dist/, push to GitHub,
-configure GitHub Pages, poll for HTTP 200, and launch xdg-open.
-See BUILD_METHOD.txt for details on the one-shot idempotent heredoc pattern.
 
 VERIFIED REFERENCES & CITATIONS
 - SQLite Write-Ahead Logging: https://www.sqlite.org/wal.html

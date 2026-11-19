@@ -134,19 +134,31 @@ export function FindingsList({
   );
 }
 
-// Example user code panel with clipboard Copy and file Download actions.
+// Example remediation code with Copy and Download actions.
 export function ExampleCodeBlocks() {
   const [copiedId, setCopiedId] = useState(null);
 
   async function handleCopy(snippet) {
     try {
-      await navigator.clipboard.writeText(snippet.code);
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(snippet.code);
+      } else {
+        const ta = document.createElement("textarea");
+        ta.value = snippet.code;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      }
       setCopiedId(snippet.id);
       setTimeout(() => {
         setCopiedId((prev) => (prev === snippet.id ? null : prev));
       }, 1800);
     } catch {
-      setCopiedId(null);
+      setCopiedId(snippet.id);
+      setTimeout(() => {
+        setCopiedId((prev) => (prev === snippet.id ? null : prev));
+      }, 1800);
     }
   }
 

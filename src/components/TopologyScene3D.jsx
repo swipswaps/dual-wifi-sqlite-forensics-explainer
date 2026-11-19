@@ -1,8 +1,10 @@
 import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
 
-// 3D visualization of dual 2.4 GHz wireless interfaces, 60s systemd timers,
-// and SQLite WAL write contention.
+// 3D topology scene showing:
+// - Wireless plane (Broadcom BCM4331 vs Realtek RTL8188ETV)
+// - Center plane (60s systemd timer collectors)
+// - Right plane (SQLite WAL/DB target)
 export default function TopologyScene3D({ activeFocus = "all", contentionRate = 0.75 }) {
   const mountRef = useRef(null);
   const focusRef = useRef(activeFocus);
@@ -134,6 +136,11 @@ export default function TopologyScene3D({ activeFocus = "all", contentionRate = 
           <span className="text-sky-400">■ 60s Timers</span>
           <span className="text-rose-400">■ SQLite Store</span>
         </div>
+      </div>
+      <div className="mb-2 grid grid-cols-3 gap-2 text-center text-[11px] text-slate-400">
+        <div className="rounded bg-slate-950/70 py-1">Plane 1: Dual 2.4 GHz Stations</div>
+        <div className="rounded bg-slate-950/70 py-1">Plane 2: 60s Oneshot Timers</div>
+        <div className="rounded bg-slate-950/70 py-1">Plane 3: SQLite WAL Store</div>
       </div>
       <div ref={mountRef} className="h-[320px] w-full overflow-hidden rounded-lg" />
     </div>

@@ -1,4 +1,4 @@
-// Empirical 100-packet probe results on SSID belkin2 (2462 MHz, channel 11).
+// Empirical 100-packet probe comparison on SSID belkin2 (2462 MHz, channel 11).
 export const ADAPTER_TELEMETRY = [
   {
     id: "broadcom",
@@ -30,7 +30,7 @@ export const ADAPTER_TELEMETRY = [
   },
 ];
 
-// Core findings synthesized from dual-Wi-Fi and SQLite lock-contention logs.
+// Audited findings across wireless, SQLite lock contention, and systemd timers.
 export const INITIAL_FINDINGS = [
   {
     id: "bcm4331-loss-vs-rssi",
@@ -48,7 +48,7 @@ export const INITIAL_FINDINGS = [
     title: "fix-wifi.sh (v39.8) Validates Realtek/Aggregate State as Broadcom Recovery",
     severity: "defect",
     evidence:
-      "Nov 18 execution unloaded b43/ssb, loaded bcma/b43, selected wlp0s20u2 (192.168.4.54), and logged WIFI_RECOVERY_SUCCESS while Broadcom was still connecting.",
+      "Nov 18 journal shows b43/ssb unload and bcma/b43 reload, then selection of wlp0s20u2 (192.168.4.54) and WIFI_RECOVERY_SUCCESS while Broadcom was still connecting.",
     mechanism:
       "Matches first ^wl* interface and aggregate connectivity rather than binding recovery checks strictly to PCI 14e4:4331.",
   },
@@ -104,7 +104,7 @@ export const INITIAL_FINDINGS = [
   },
 ];
 
-// Example remediation code with verbose comments for one-click Copy and Download.
+// Example user remediation code with verbose comments, Copy, and Download support.
 export const EXAMPLE_USER_CODE = [
   {
     id: "batched-sqlite-writer-py",
@@ -112,7 +112,7 @@ export const EXAMPLE_USER_CODE = [
     language: "python",
     title: "Single-Transaction Batched SQLite Writer + Safe IPv6/IPv4 Endpoint Parser",
     summary:
-      "Replaces per-row sqlite3 subprocesses with one connection, explicit PRAGMA journal_mode=WAL and PRAGMA busy_timeout=5000, bracket-aware host:port parsing, and non-blocking subprocess.Popen when spawning child helpers.",
+      "Replaces per-row sqlite3 subprocesses with one connection, explicit PRAGMA journal_mode=WAL and PRAGMA busy_timeout=5000, bracket-aware host:port parsing, and subprocess.Popen when launching helper processes.",
     code: `#!/usr/bin/env python3
 """Batched SQLite writer with WAL + busy_timeout and bracket-safe endpoint parsing."""
 
@@ -135,13 +135,13 @@ def parse_host_port(endpoint: str) -> Tuple[str, str]:
 
 
 def spawn_collector_helper(args: list[str]) -> int:
-    """Launch a child helper via subprocess.Popen and wait cleanly for its exit code."""
+    """Start a helper process via subprocess.Popen and wait for its exit code."""
     proc = subprocess.Popen(args)
     return proc.wait()
 
 
 def write_network_batch(db_path: Path, rows: list[tuple[str, str, str]]) -> int:
-    """Write rows in one transaction using a single WAL connection and busy_timeout."""
+    """Persist rows in one transaction using a single WAL connection and busy_timeout."""
     db_path.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(str(db_path), timeout=5.0)
     try:

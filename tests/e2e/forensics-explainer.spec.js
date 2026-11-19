@@ -1,28 +1,27 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Dual-Wi-Fi & SQLite Contention Forensic Explainer — Full Component Audit", () => {
-  test("1. Header & Backend Detection Badge component renders and states mode", async ({ page }) => {
+  test("1. Header, Backend Detection Badge & Navigation Bar render cleanly", async ({ page }) => {
     await page.goto("./");
-    const heading = page.getByRole("heading", {
-      name: /Dual-Wi-Fi & SQLite Contention Forensic Explainer/i,
-    });
-    await expect(heading).toBeVisible();
-
-    const badge = page.getByText(/Static Mode \(No Docker Backend Detected\)|Backend Detected/i);
-    await expect(badge).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /Dual-Wi-Fi & SQLite Contention Forensic Explainer/i })
+    ).toBeVisible();
+    await expect(
+      page.getByText(/Static Mode \(No Docker Backend Detected\)|Backend Detected/i)
+    ).toBeVisible();
+    await expect(page.getByRole("navigation", { name: /Section jump links/i })).toBeVisible();
   });
 
-  test("2. TopologyScene3D (Three.js canvas & legend) mounts with valid dimensions and no fatal errors", async ({
+  test("2. TopologyScene3D mounts canvas with valid bounds and no uncaught page errors", async ({
     page,
   }) => {
     const pageErrors = [];
     page.on("pageerror", (err) => pageErrors.push(String(err)));
 
     await page.goto("./");
-    const legendHeader = page.getByText(
-      /3D Topology: Dual-Wi-Fi Plane, 60s Timers & SQLite WAL Target/i
-    );
-    await expect(legendHeader).toBeVisible();
+    await expect(
+      page.getByText(/3D Topology: Dual-Wi-Fi Plane, 60s Timers & SQLite WAL Target/i)
+    ).toBeVisible();
 
     const canvas = page.locator("canvas").first();
     await expect(canvas).toBeVisible();
@@ -37,9 +36,7 @@ test.describe("Dual-Wi-Fi & SQLite Contention Forensic Explainer — Full Compon
     expect(pageErrors).toEqual([]);
   });
 
-  test("3. Subsystem Filter buttons, Search input, and Contention Rate range slider", async ({
-    page,
-  }) => {
+  test("3. Subsystem Filter, Search Input & Contention Rate Slider update UI", async ({ page }) => {
     await page.goto("./");
 
     await page.getByRole("button", { name: /^wireless$/i }).click();
@@ -64,15 +61,15 @@ test.describe("Dual-Wi-Fi & SQLite Contention Forensic Explainer — Full Compon
 
     const slider = page.locator("#contention-slider");
     await slider.evaluate((el) => {
-      const descriptor = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value");
-      descriptor.set.call(el, "0.95");
+      const desc = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value");
+      desc.set.call(el, "0.95");
       el.dispatchEvent(new Event("input", { bubbles: true }));
       el.dispatchEvent(new Event("change", { bubbles: true }));
     });
     await expect(page.getByText(/3D Write-Contention Simulation Rate \(95%\)/i)).toBeVisible();
   });
 
-  test("4. AdapterComparisonTable displays both 2.4 GHz stations and empirical metrics", async ({
+  test("4. AdapterComparisonTable displays both 2.4 GHz adapters and packet loss metrics", async ({
     page,
   }) => {
     await page.goto("./");
@@ -88,20 +85,15 @@ test.describe("Dual-Wi-Fi & SQLite Contention Forensic Explainer — Full Compon
     await expect(table).toContainText("0%");
   });
 
-  test("5. FindingsList selection and operator note submission work across cards", async ({
-    page,
-  }) => {
+  test("5. FindingsList supports card selection and session note creation", async ({ page }) => {
     await page.goto("./");
-
     const noteInput = page.getByPlaceholder(
       /Add local session annotation|Persist operator annotation/i
     );
     await expect(noteInput).toBeVisible();
-    await noteInput.fill("Playwright audit verified card 1 note persistence.");
+    await noteInput.fill("Playwright audit verified session note creation.");
     await page.getByRole("button", { name: /^Save Note$/i }).click();
-    await expect(
-      page.getByText(/Playwright audit verified card 1 note persistence\./i)
-    ).toBeVisible();
+    await expect(page.getByText(/Playwright audit verified session note creation\./i)).toBeVisible();
 
     await page.getByText(/Synchronized 60s Oneshot Timers Share Target Database/i).click();
     await expect(
@@ -109,9 +101,7 @@ test.describe("Dual-Wi-Fi & SQLite Contention Forensic Explainer — Full Compon
     ).toBeVisible();
   });
 
-  test("6. ExampleCodeBlocks render snippets with working Copy and Download triggers", async ({
-    page,
-  }) => {
+  test("6. ExampleCodeBlocks provide working Copy feedback and file Download", async ({ page }) => {
     await page.goto("./");
     await expect(page.getByText("batched_sqlite_writer.py")).toBeVisible();
     await expect(page.getByText("per-iface-wifi-probe.sh")).toBeVisible();
@@ -121,13 +111,16 @@ test.describe("Dual-Wi-Fi & SQLite Contention Forensic Explainer — Full Compon
     expect(await copyButtons.count()).toBeGreaterThanOrEqual(2);
     expect(await downloadButtons.count()).toBeGreaterThanOrEqual(2);
 
+    await copyButtons.first().click();
+    await expect(page.getByRole("button", { name: /^Copied$/i }).first()).toBeVisible();
+
     const downloadPromise = page.waitForEvent("download");
     await downloadButtons.first().click();
     const download = await downloadPromise;
     expect(download.suggestedFilename()).toBe("batched_sqlite_writer.py");
   });
 
-  test("7. Footer Citations list renders verified HTTPS and ISBN references", async ({ page }) => {
+  test("7. Footer Citations renders verified HTTPS URLs and ISBNs", async ({ page }) => {
     await page.goto("./");
     await expect(page.getByText(/Verified References & Citations/i)).toBeVisible();
     await expect(page.getByText(/https:\/\/www\.sqlite\.org\/wal\.html/i)).toBeVisible();

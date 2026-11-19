@@ -1,29 +1,20 @@
 ONE-SHOT IDEMPOTENT HEREDOC BUILD METHOD
-Adapted for Dual-Wi-Fi & SQLite Contention Forensic Explainer (No Pulumi)
+Dual-Wi-Fi & SQLite Contention Forensic Explainer
 
 1. SINGLE-SCRIPT HEREDOC MATERIALIZATION
-   Every file in the repository is written in one pass using quoted heredocs
-   (cat <<'EOF' > "$TARGET_DIR/..."). Single-quoting the delimiter ('EOF')
-   prevents shell variable or backtick expansion inside code, SQL, Caddyfile,
-   or JSON payloads.
+   Every file is written deterministically via single-quoted heredocs
+   (cat <<'EOF' > "$TARGET_DIR/..."), preventing unintended shell expansion.
 
-2. IDEMPOTENCY ON RE-RUN
-   - Directory creation uses `mkdir -p`, which succeeds whether folders already
-     exist or not.
-   - File writes overwrite target paths deterministically from a single source
-     of truth in the build script, avoiding drift from manual edits or stream
-     rewrites.
-   - Git initialization checks for `.git`, stages all changes, and only commits
-     when `git diff --cached --quiet` reports staged changes.
-   - GitHub repository creation checks `gh repo view` first and creates the repo
-     only if absent.
-   - GitHub Pages configuration attempts POST to create Pages and falls back to
-     PUT if Pages is already enabled.
+2. IDEMPOTENT RE-RUN BEHAVIOR
+   - mkdir -p creates directories safely whether or not they already exist.
+   - Full file overwrites keep every file in sync with the single script.
+   - Git stages changes and commits only when staged diffs are non-empty.
+   - GitHub repo creation checks `gh repo view` first; GitHub Pages uses
+     POST and falls back to PUT if already enabled.
+   - Playwright results are parsed recursively into README.txt without
+     duplicating prior report sections.
 
-3. DUAL-PLANE DELIVERY
-   - Plane 1 (Static GitHub Pages): Builds Vite + React + Tailwind + Three.js
-     into dist/, copies dist/ into a temporary git worktree on the Pages branch,
-     pushes it, and polls until HTTP 200 before calling xdg-open.
-   - Plane 2 (Optional Local Docker Stack): Provides docker-compose.yml,
-     Caddyfile, FastAPI, and SQLite (WAL + FTS5) for local persistence and
-     full-text search when running locally.
+3. DUAL-PLANE ARCHITECTURE
+   - Static GitHub Pages Plane: Vite + React + Tailwind CSS + Three.js,
+     with Copy/Download code blocks and automatic local backend probing.
+   - Optional Local Docker Plane: Caddy + FastAPI + SQLite (WAL + FTS5).
